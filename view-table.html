@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <base target="_top">
+  <!-- <base target="_self"> -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>
+    <?!= targetEntityTableName; ?>
+  </title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+  <style>
+    .loading {
+      background-color: rgba(255, 255, 255, 0.5);
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 10000;
+    }
+  </style>
+
+</head>
+
+<body class="bg-dark text-white">
+
+  <!-- Start: Loader -->
+  <div id="loading" class="loading">
+    <div class="position-absolute top-50 start-50 translate-middle">
+      <div class="spinner-border text-dark" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  </div>
+  <!-- End: Loader -->
+
+  <div class="container p-4">
+
+    <!-- Start: Navigation Panel -->
+    <div class="mb-4">
+      <div class="mb-4">
+        <button class="btn btn-primary btn-lg" type="submit" id="go-home"><i class="bi bi-house-door"></i> Home</button>
+        <span class="m-2"></span>
+        <button class="btn btn-secondary btn-lg" type="submit" id="logout"><i class="bi bi-box-arrow-left"></i> Logout</button>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col text-center">
+          <h1 id="page">
+            <?!= targetEntityTableName; ?>
+          </h1>
+        </div>
+      </div>
+      <hr>
+    </div>
+    <!-- End: Navigation Panel -->
+
+    <!-- Start: Table -->
+    <div id="targetTable">
+      <?!= targetEntityTableData; ?>
+    </div>
+    <!-- End: Table -->
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+    integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"
+    integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK" crossorigin="anonymous">
+  </script>
+
+  <script>
+    // Global Variables
+    var Logout = document.getElementById("logout");
+    var Home = document.getElementById("go-home");
+    
+    var Loader = document.getElementById("loading");
+    var CurrentPage = document.getElementById("page");
+    var currentID = 0;
+
+  // Global Events Handlers
+    function DoThisWhenPageLoads() {
+      HideLoaderScreen();
+    }
+
+    function OnLogout(){
+      google.script.run.withSuccessHandler((obj) => {
+        RenderPage(obj.url);
+      }).LogoutUser();
+    }
+
+    function GotoHome(){
+      google.script.run.withSuccessHandler((obj) => {
+        RenderPage(obj.url);
+      }).TakeUserBackToHome();
+    }
+
+  // Global Functions
+    function EditRecord(recordID) {
+
+      ShowLoaderScreen();
+      currentID = recordID;
+
+      switch (CurrentPage.innerHTML.trim()){
+
+        case "Students Table":
+          google.script.run.withSuccessHandler(OpenFormToUpdate).GetStudentDetailsToUpdate(recordID);
+          break;
+
+        case "Files Table":
+          google.script.run.withSuccessHandler(OpenFormToUpdate).GetFileDetailsToUpdate(recordID);
+          break;
+
+        case "Transactions Table":
+          google.script.run.withSuccessHandler(OpenFormToUpdate).GetTransactionDetailsToUpdate(recordID);
+          break;
+      }
+    }
+
+    function ViewRecord(recordID) {
+
+      ShowLoaderScreen();
+
+      switch (CurrentPage.innerHTML.trim()){
+
+        case "Students Table":
+          google.script.run.withSuccessHandler((obj) => {
+            RenderPage(obj.url);
+            HideLoaderScreen();
+          }).TakeUserToStudentDetailsPage(recordID);
+          break;
+
+        case "Files Table":
+          google.script.run.withSuccessHandler((obj) => {
+            RenderPage(obj.url);
+            HideLoaderScreen();
+          }).TakeUserToFileDetailsPage(recordID);
+          break;
+
+        case "Transactions Table":
+          google.script.run.withSuccessHandler((obj) => {
+            RenderPage(obj.url);
+            HideLoaderScreen();
+          }).TakeUserToTransactionDetailsPage(recordID);
+          break;
+      }
+    }
+
+    function DeleteRecord(recordID) {
+
+      ShowLoaderScreen();
+
+      switch (CurrentPage.innerHTML.trim()){
+
+        case "Students Table":
+          google.script.run.withSuccessHandler((obj) => {
+            RenderPage(obj.url);
+            HideLoaderScreen();
+          }).TakeUserToStudentDeletePage(recordID);
+          break;
+
+        case "Files Table":
+          google.script.run.withSuccessHandler((obj) => {
+            RenderPage(obj.url);
+            HideLoaderScreen();
+          }).TakeUserToFileDeletePage(recordID);
+          break;
+
+        case "Transactions Table":
+          google.script.run.withSuccessHandler((obj) => {
+            RenderPage(obj.url);
+            HideLoaderScreen();
+          }).TakeUserToTransactionDeletePage(recordID);
+          break;
+      }
+    }
+
+    function OpenFormToUpdate(data) {
+
+      switch (CurrentPage.innerHTML.trim()){
+        case "Students Table":
+          window.localStorage.setItem("studentDetails", data);
+          google.script.run.withSuccessHandler((obj) => {
+            RenderPage(obj.url);
+            HideLoaderScreen();
+          }).TakeUserToStudentFormToUpdate(currentID);
+          break;
+
+        case "Files Table":
+          window.localStorage.setItem("fileDetails", data);
+          google.script.run.withSuccessHandler((obj) => {
+            RenderPage(obj.url);
+            HideLoaderScreen();
+          }).TakeUserToFileFormToUpdate(currentID);
+          break;
+
+        case "Transactions Table":
+          window.localStorage.setItem("transactionDetails", data);
+          google.script.run.withSuccessHandler((obj) => {
+            RenderPage(obj.url);
+            HideLoaderScreen();
+          }).TakeUserToTransactionFormToUpdate(currentID);
+          break;
+      }
+    }
+
+  </script>
+
+  <!-- Include Global Function File -->
+  <?!= include("global-functions"); ?>
+
+  <script>
+
+    // Global Events Listeners
+    Logout.addEventListener("click", OnLogout);
+    Home.addEventListener("click", GotoHome);
+    document.addEventListener("DOMContentLoaded", DoThisWhenPageLoads);
+
+  </script>
+  
+</body>
+
+</html>
