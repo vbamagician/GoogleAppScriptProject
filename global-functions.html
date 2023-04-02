@@ -1,0 +1,93 @@
+<script>
+  function RenderPage(pagename){
+    window.top.location.replace(pagename);
+    // window.location.replace(pagename);
+    // window.location.href = pagename
+  }
+
+  // Input field type Date only accepts date value in YYYY-MM-DD format.
+  //Following function will help to conver general date into acceptable format 
+  // and hence you can re-hydrate date on input type date fields. 
+  
+  function GetCompitableDateFormatToSetIntoDateTypeInput(inputDate) {
+
+    var date = new Date(inputDate);
+    var year = date.getFullYear();
+    var month = String(date.getMonth() + 1).padStart(2,"0");
+    var day = String(date.getDate()).padStart(2,"0");
+    return year + "-" + month + "-" + day;
+  }
+
+  function ResetForm() {
+
+    var firstField;
+    var inputs = document.querySelectorAll('input,textarea,select');
+    for(var i=0; i<inputs.length; i++){
+      if (firstField === undefined) {
+        firstField = inputs[i];
+      }
+      inputs[i].value = '';
+    }
+    firstField.focus();
+  }
+
+  function IsValidToSaveRecord() {
+      
+    var formValid=true;
+    var inputs = document.querySelectorAll('input,textarea,select');
+
+    for(var i=0; i<inputs.length; i++){
+      if(inputs[i].hasAttribute("required") && !inputs[i].checkValidity()) {
+          formValid = false;
+          inputs[i].focus();
+          ShowLiveToast("Failed", inputs[i].name + ": <br>" + inputs[i].validationMessage);
+          break;
+      }
+    }
+    return formValid;
+  }
+
+  function ShowLiveToast(stateOfToast, message){
+
+    if (stateOfToast === "Failed") {
+      liveToast.classList.add("bg-danger");
+    } else if (stateOfToast === "Success") {
+      liveToast.classList.add("bg-success");
+    }
+
+    liveToastContent.innerHTML = message;
+    const toast = new bootstrap.Toast(liveToast)
+    toast.show();
+  }
+
+  function ShowSpinner() {
+    spinner.style.display = '';
+  }
+
+  function HideSpinner() {
+    spinner.style.display = 'none';
+  }
+
+  function ShowLoaderScreen(){
+    Loader.classList.remove("d-none");
+  }
+
+  function HideLoaderScreen(){
+    Loader.classList.add("d-none");
+  }
+
+  function runGoogleScriptFunction(serverFunctionName, params = []) {
+    const promise = new Promise((resolve, reject) => {
+      google.script.run
+        .withSuccessHandler((data) => {
+          resolve(data);
+        })
+        .withFailureHandler((er) => {
+          reject(er);
+        })
+        [serverFunctionName](...params);
+    });
+    return promise;
+  }
+
+</script>
