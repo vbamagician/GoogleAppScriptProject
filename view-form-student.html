@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <base target="_top">
+  <!-- <base target="_self"> -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>
+    <?!= currentPageTitle; ?>
+  </title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+</head>
+
+<body class="bg-dark text-white">
+
+  <div class="container p-4">
+
+    <!-- Start: Navigation Panel -->
+    <div class="mb-4">
+      <div class="mb-4">
+        <button class="btn btn-primary btn-lg" type="submit" id="go-home"><i class="bi bi-house-door"></i> Home</button>
+        <span class="m-2"></span>
+        <button class="btn btn-secondary btn-lg" type="submit" id="logout"><i class="bi bi-box-arrow-left"></i> Logout</button>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col text-center">
+          <h1 id="page"><?!= currentPageTitle; ?></h1>
+        </div>
+      </div>
+      <hr>
+      <div>
+        <span class="text-primary">Fields marked with (<span class="text-danger">*</span>) are mandatory</span>
+      </div>
+    </div>
+    <!-- End: Navigation Panel -->
+
+    <form>
+
+      <!-- Start: Name Group -->
+      <div class="row">
+        <div class="col-12 col-sm-4 mb-4">
+          <label for="first-name" class="form-label">First Name<span class="text-danger"> *</span> :</label>
+          <input type="text" class="form-control" id="first-name" name="First Name" required>
+        </div>
+        <div class="col-12 col-sm-4 mb-4">
+          <label for="middle-name" class="form-label">Middle Name<span class="text-danger"> *</span> :</label>
+          <input type="text" class="form-control" id="middle-name" name="Middle Name" required>
+        </div>
+        <div class="col-12 col-sm-4 mb-4">
+          <label for="last-name" class="form-label">Last Name<span class="text-danger"> *</span> :</label>
+          <input type="text" class="form-control" id="last-name" name="Last Name" required>
+        </div>
+      </div>
+      <!-- End: Name Group -->
+
+      <!-- Start: Contact and DOB Group -->
+      <div class="row">
+        <!-- Start: Date of Birth -->
+        <div class="col-12 col-sm-4 mb-4">
+          <label for="dob" class="form-label">Date of Birth<span class="text-danger"> *</span> :</label>
+          <input type="date" class="form-control" name="Date of Birth" id="dob">
+        </div>
+        <!-- End: Date of Birth -->
+        <!-- Start: Email Address -->
+        <div class="col-12 col-sm-4 mb-4">
+          <label for="email" class="form-label">E-Mail Address<span class="text-danger"> *</span> :</label>
+          <input type="email" class="form-control" id="email" name="E-Mail Address" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+        </div>
+        <!-- End: Email Address -->
+        <!-- Start: Mobile/Phone -->
+        <div class="col-12 col-sm-4 mb-4">
+          <label for="mobile" class="form-label">Mobile<span class="text-danger"> *</span> :</label>
+          <input type="text" class="form-control" id="mobile" name="Mobile" minlength="10" maxlength="10" required>
+        </div>
+        <!-- End: Mobile/Phone -->
+      </div>
+      <!-- End: Contact and DOB Group -->
+
+      <!-- Start: Present Address -->
+      <div class="row">
+        <div class="col-12 mb-4">
+          <label for="address" class="form-label">Present Address<span class="text-danger"> *</span> :</label>
+          <textarea class="form-control" id="address" name="Present Address" rows="2" required></textarea>
+        </div>
+      </div>
+      <!-- End: Present Address -->
+
+      <!-- Start: Introducer Group -->
+      <div class="row">
+        <div class="col-12 col-sm-4 mb-4">
+          <label for="introducername" class="form-label">Introducer Name<span class="text-danger"> *</span> :</label>
+          <input type="text" class="form-control" id="introducername" name="Introducer Name" required>
+        </div>
+        <div class="col-12 col-sm-4 mb-4">
+          <label for="introducerphone" class="form-label">Introducer Phone<span class="text-danger"> *</span> :</label>
+          <input type="text" class="form-control" id="introducerphone" name="Introducer Phone" minlength="10" maxlength="10" required>
+        </div>
+      </div>
+      <!-- End: Introducer Group -->
+
+    </form>
+
+    <!-- Start: Live Toast -->
+    <div id="liveToast" class="toast align-items-center text-white fw-bold border-0 mb-4" role="alert"
+      aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
+      <div class="d-flex">
+        <div class="toast-body" id="liveToastContent">
+        </div>
+        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+    <!-- End: Live Toast -->
+
+    <!-- Start: Form Operation Buttons -->
+    <div>
+      <button class="btn btn-primary btn-lg" type="submit" id="save">
+        <span id="spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        <i class="bi bi-save"></i> Save
+      </button>
+      <span class="m-2"></span>
+      <button class="btn btn-secondary btn-lg" type="submit" id="reset"><i class="bi bi-arrow-clockwise"></i> Reset</button>
+    </div>
+    <!-- End: Form Operation Buttons -->
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+    integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"
+    integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK" crossorigin="anonymous">
+  </script>
+
+  <script>
+    // Gloval Variables
+    var logout = document.getElementById("logout");
+    var home = document.getElementById("go-home");
+
+    var liveToast = document.getElementById("liveToast");
+    var liveToastContent = document.getElementById("liveToastContent");
+    
+    var firstname = document.getElementById("first-name");
+    var middlename = document.getElementById("middle-name");
+    var lastname = document.getElementById("last-name");
+    
+    var dob = document.getElementById("dob");
+    var email = document.getElementById("email");
+    var mobile = document.getElementById("mobile");
+
+    var address = document.getElementById("address");
+    var introducername = document.getElementById("introducername");
+    var introducerphone = document.getElementById("introducerphone");
+
+    var save = document.getElementById("save");
+    var reset = document.getElementById("reset");
+
+    var spinner = document.getElementById("spinner");
+    var CurrentPage = document.getElementById("page");
+
+  // Global Events Handlers
+  
+    function DoThisWhenPageLoads() {
+
+      HideSpinner();
+      
+      var data = window.localStorage.getItem('studentDetails');
+      
+      if (data !== null) {
+
+        var studentData = JSON.parse(data);
+        var studentFullName = studentData.fullname.split(" ");
+        var dateOfBirth = new Date(studentData.dob);
+        
+        firstname.value = studentFullName[0];
+        middlename.value = studentFullName[1];
+        lastname.value = studentFullName[2];
+        dob.value = GetCompitableDateFormatToSetIntoDateTypeInput(dateOfBirth);
+        email.value = studentData.email;
+        mobile.value = studentData.phone;
+        address.value = studentData.presentAddress;
+        introducername.value = studentData.introducerName;
+        introducerphone.value = studentData.introducerPhone;
+      }
+
+      window.localStorage.clear();
+      firstname.focus();
+
+      if (CurrentPage.innerHTML.trim() === "Update Student") {
+        reset.style.visibility = 'hidden';
+      }
+    }
+
+    function OnLogout(){
+      google.script.run.withSuccessHandler((obj) => {
+        RenderPage(obj.url);
+      }).LogoutUser();
+    }
+
+    function GotoHome(){
+      google.script.run.withSuccessHandler((obj) => {
+        RenderPage(obj.url);
+      }).TakeUserBackToHome();
+    }
+
+    function SaveRecord(){
+      
+      ShowSpinner();
+
+      if(IsValidToSaveRecord()){
+
+        var lineItems = GetStudentLineItems();
+        
+        switch (CurrentPage.innerHTML.trim()) {          
+          case "Register New Student":
+            google.script.run.withSuccessHandler(ResetFormStateAfterSuccessfullAddingNewStudent).AddNewStudent(lineItems);
+            break;
+
+          case "Update Student":
+            google.script.run.withSuccessHandler(GoBack).UpdateStudent(lineItems);
+            break;
+        }
+      } else {
+        HideSpinner();
+      }
+    }
+
+    function GoBack(){
+      google.script.run.withSuccessHandler((obj) => {
+        RenderPage(obj.url);
+        HideSpinner();
+      }).TakeUserToPreviousPage(CurrentPage.innerHTML.trim());
+    }
+
+  // Global Functions
+
+    function ResetFormStateAfterSuccessfullAddingNewStudent() {
+
+      ShowLiveToast("Success", "Student added successfully!");
+      ResetForm();
+      HideSpinner();
+    }
+
+    function GetStudentLineItems() {
+      return ([
+        firstname.value.trim() + " " + middlename.value.trim() + " " + lastname.value.trim(),
+        dob.value,
+        address.value.trim(),
+        email.value.trim(),
+        mobile.value.trim(),
+        introducername.value.trim(),
+        introducerphone.value.trim()
+      ]);
+    }
+
+  </script>
+
+  <!-- Include Global Function File -->
+  <?!= include("global-functions"); ?>
+
+  <script>
+    // Global Events Listeners
+    logout.addEventListener("click", OnLogout);
+    home.addEventListener("click", GotoHome);
+    save.addEventListener("click", SaveRecord);
+    reset.addEventListener("click", ResetForm);
+    document.addEventListener("DOMContentLoaded", DoThisWhenPageLoads);
+  </script>
+
+</body>
+
+</html>
