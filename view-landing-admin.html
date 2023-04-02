@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <base target="_top">
+  <!-- <base target="_self"> -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Landing Page</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+  <style>
+    hr {
+      margin: auto;
+      border: 0;
+      border-top: 1px solid rgba(0, 0, 0, 1);
+      width: 40%;
+    }
+  </style>
+  <style>
+    .loading {
+      background-color: rgba(255,255,255,0.5);
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 10000;
+    }
+  </style>
+</head>
+
+<body class="bg-dark text-white">
+
+  <!-- Start: Loader -->
+  <div id="loading" class="loading">
+    <div class="position-absolute top-50 start-50 translate-middle">
+      <div class="spinner-border text-dark" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  </div>
+  <!-- End: Loader -->
+
+  <!-- Login View Starts -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <span class="navbar-brand text-warning fw-bold">Sahyog Nidhi Trust</span>
+      <div class="d-flex">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <span class="nav-link active">Welcome, <?!= currentUserFullName; ?>, <span class="text-warning fw-bold"><?!= currentUserType; ?></span></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content Starts -->
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-10 col-sm-8 col-md-6 col-lg-4 bg-white rounded p-4 shadow">
+
+        <button type="submit" class="btn btn-primary btn-lg w-100 mb-2" id="new-student"><i class="bi bi-person-plus"></i> New Student</button>
+        <button type="submit" class="btn btn-primary btn-lg w-100 mb-2" id="new-file"><i class="bi bi-file-earmark-plus"></i> New File</button>
+        <button type="submit" class="btn btn-primary btn-lg w-100 mb-2" id="new-transaction"><i class="bi bi-plus-circle"></i> New Transaction</button>
+
+        <div class="m-2">
+          <hr>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg w-100 mb-2 mt-2" id="all-students"><i class="bi bi-people"></i> Students Table</button>
+        <button type="submit" class="btn btn-primary btn-lg w-100 mb-2" id="all-files"><i class="bi bi-files"></i> Files Table</button>
+        <button type="submit" class="btn btn-primary btn-lg w-100 mb-2" id="all-tansactions"><i class="bi bi-arrow-down-up"></i> All Transactions</button>
+
+        <div class="m-2">
+          <hr>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg w-100 mb-2 mt-2" id="overall"><i class="bi bi-graph-up"></i> Overall Summary</button>
+
+        <div class="m-2">
+          <hr>
+        </div>
+
+        <form>
+          <label for="student" class="form-label text-dark">Select Student :</label>
+          <select name="Student Name" class="form-control" id="student" required>
+            <option></option>
+            <?!= listStudents ?>
+          </select>
+        </form>
+
+        <button type="submit" class="btn btn-primary btn-lg w-100 mb-2 mt-2" id="studentSummary"><i class="bi bi-filter-square"></i> Student Summary</button>
+
+        <div class="m-2">
+          <hr>
+        </div>
+
+        <button type="submit" class="btn btn-secondary btn-lg w-100 mt-2" id="logout"><i class="bi bi-box-arrow-left"></i> Logout</button>
+
+      </div>
+    </div>
+  </div>
+  <!-- Login View Ends -->
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+    integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous">
+  </script>
+
+  <script>
+    // Global Vairables
+    var NewStudent = document.getElementById("new-student");
+    var NewFile = document.getElementById("new-file");
+    var NewTransaction = document.getElementById("new-transaction");
+
+    var AllStudents = document.getElementById("all-students");
+    var AllFiles = document.getElementById("all-files");
+    var AllTransactions = document.getElementById("all-tansactions");
+
+    var OverallSummary = document.getElementById("overall");
+
+    var Student = document.getElementById("student");
+    var StudentSummary = document.getElementById("studentSummary");
+    var Loader = document.getElementById("loading");
+
+    var logout = document.getElementById("logout");
+
+  // Global Events Handlers
+    function DoThisWhenPageLoads() {
+      HideLoaderScreen();
+    }
+
+    function OnLogout(){
+      ShowLoaderScreen();
+      google.script.run.withSuccessHandler((obj) => {
+        RenderPage(obj.url);
+        HideLoaderScreen();
+      }).LogoutUser();
+    }
+
+    function GotoNewStudentPage(){
+      ShowLoaderScreen();
+      google.script.run.withSuccessHandler((obj) => {
+        RenderPage(obj.url);
+        HideLoaderScreen();
+      }).TakeUserToNewStudentPage();
+    }
+
+    function GotoStudentsTablePage(){
+      ShowLoaderScreen();
+      google.script.run.withSuccessHandler((obj) => {
+        if (obj.url === "Records Not Found") {
+          window.alert("No records found! Kindly add a record in database!");
+          HideLoaderScreen();
+        } else {
+          RenderPage(obj.url);
+          HideLoaderScreen();
+        }
+      }).TakeUserToStudentsTablePage();
+    }
+
+    function GotoNewFilePage(){
+      ShowLoaderScreen();
+      google.script.run.withSuccessHandler((obj) => {
+        RenderPage(obj.url);
+        HideLoaderScreen();
+      }).TakeUserToNewFilePage();
+    }
+
+    function GotoFilesTablePage(){
+      ShowLoaderScreen();
+      google.script.run.withSuccessHandler((obj) => {
+        if (obj.url === "Records Not Found") {
+          window.alert("No records found! Kindly add a record in database!");
+          HideLoaderScreen();
+        } else {
+          RenderPage(obj.url);
+          HideLoaderScreen();
+        }
+      }).TakeUserToFilesTablePage();
+    }
+
+    function GotoNewTransactionPage(){
+      ShowLoaderScreen();
+      google.script.run.withSuccessHandler((obj) => {
+        RenderPage(obj.url);
+        HideLoaderScreen();
+      }).TakeUserToNewTransactionPage();
+    }
+
+    function GotoTransactionsTablePage(){
+      ShowLoaderScreen();
+      google.script.run.withSuccessHandler((obj) => {
+        if (obj.url === "Records Not Found") {
+          window.alert("No records found! Kindly add a record in database!");
+          HideLoaderScreen();
+        } else {
+          RenderPage(obj.url);
+          HideLoaderScreen();
+        }
+      }).TakeUserToTransactionsTablePage();
+    }
+
+    function GotoOverallSummaryPage(){
+      ShowLoaderScreen();
+      google.script.run.withSuccessHandler((obj) => {
+        RenderPage(obj.url);
+        HideLoaderScreen();
+      }).TakeUserToOverallSummaryPage();
+    }
+
+    function GotoStudentSummaryPage(){
+      ShowLoaderScreen();
+      if (Student.value !== ''){
+
+        google.script.run.withSuccessHandler((obj) => {
+          if (obj.decision === true){
+
+            google.script.run.withSuccessHandler((obj) => {
+              RenderPage(obj.url);
+              HideLoaderScreen();
+            }).TakeUserToStudentSummaryPage(Student.value);
+
+          } else {
+            window.alert("Something went wrong! Kindly check if Student has file or any transactions or not. If not then registered them first!");
+            HideLoaderScreen();
+          }
+
+        }).IsOkayToProduceStudentSummary(Student.value)
+
+      } else {
+        window.alert("Please select student to see the summary");
+        HideLoaderScreen();
+      }
+    }
+
+  // Global Functions
+  </script>
+
+  <!-- Include Global Function File -->
+  <?!= include("global-functions"); ?>
+
+  <script>
+    // Global Events Listeners
+    logout.addEventListener("click", OnLogout);
+
+    NewStudent.addEventListener("click", GotoNewStudentPage);
+    AllStudents.addEventListener("click", GotoStudentsTablePage);
+
+    NewFile.addEventListener("click", GotoNewFilePage);
+    AllFiles.addEventListener("click", GotoFilesTablePage);
+
+    NewTransaction.addEventListener("click", GotoNewTransactionPage);
+    AllTransactions.addEventListener("click", GotoTransactionsTablePage);
+
+    OverallSummary.addEventListener("click", GotoOverallSummaryPage);
+    StudentSummary.addEventListener("click", GotoStudentSummaryPage);
+
+    document.addEventListener("DOMContentLoaded", DoThisWhenPageLoads);
+
+  </script>
+
+</body>
+
+</html>
