@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <base target="_top">
+  <!-- <base target="_self"> -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login View</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+  <style>
+    .loading {
+      background-color: rgba(255, 255, 255, 0.5);
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 10000;
+    }
+  </style>
+</head>
+
+<body class="bg-dark">
+
+  <!-- Start: Loader -->
+  <div id="loading" class="loading">
+    <div class="position-absolute top-50 start-50 translate-middle">
+      <div class="spinner-border text-dark" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  </div>
+  <!-- End: Loader -->
+
+  <!-- Login View Starts -->
+  <div class="container">
+    <div class="row vh-100 align-items-center justify-content-center">
+      <div class="col-10 col-sm-8 col-md-6 col-lg-4 bg-white rounded p-4 shadow">
+
+        <div class="row mb-2">
+            <img class="img-fluid" src="https://i.postimg.cc/wj8KYxDj/shayog-nidhi.png" />
+        </div>
+
+        <form>
+          <div class="mb-2">
+            <label for="user-id" class="form-label">Enter User ID</label>
+            <input type="text" class="form-control" id="user-id" required>
+          </div>
+          <div class="mb-4">
+            <label for="password" class="form-label">Enter Password</label>
+            <input type="password" class="form-control" id="password" required>
+          </div>
+        </form>
+
+        <!-- Start: Live Toast -->
+        <div id="liveToast" class="toast align-items-center text-white fw-bold border-0 mb-4" role="alert" aria-live="assertive"
+          aria-atomic="true" data-bs-delay="2500">
+          <div class="d-flex">
+            <div class="toast-body" id="liveToastContent">
+            </div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+        </div>
+        <!-- End: Live Toast -->
+
+        <!-- Login Button Click -->
+        <button type="submit" class="btn btn-primary btn-lg w-100" id="btn-login"><i class="bi bi-box-arrow-in-right"></i>&nbsp;&nbsp;Login</button>
+      </div>
+    </div>
+  </div>
+  <!-- Login View Ends -->
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+    integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous">
+  </script>
+
+  <script>
+    // Global Variables
+    var loginButton = document.getElementById("btn-login");
+    var userID = document.getElementById("user-id");
+    var password = document.getElementById("password");
+    var toastTrigger = document.getElementById('btn-login');
+
+    var Loader = document.getElementById("loading");
+    var liveToast = document.getElementById("liveToast");
+    var liveToastContent = document.getElementById("liveToastContent");
+
+  // Event Handlers
+    function OnClickOfSubmitButton() {
+      ShowLoaderScreen();
+      if (userID.value !== '' && password.value !== '') { 
+        google.script.run.withSuccessHandler(RedirectToLandingPageOnSuccessfulAuthentication).AuthenticateUser(userID.value, password.value);
+      } else {
+        alert("Kindly enter User ID and Password to login!");
+        HideLoaderScreen();
+      }
+    }
+
+    function RedirectToLandingPageOnSuccessfulAuthentication(obj){
+      if(obj.valid){
+        ShowLiveToast("Success", "Login Successful!");
+        RenderPage(obj.url);
+      } else {
+        ResetForm();
+        ShowLiveToast("Failed", "Login Failed! Please try again.");
+      }
+      HideLoaderScreen();
+    }
+
+    function ShowLiveToast(state, message){
+      if (state === "Failed") {
+        liveToast.classList.add("bg-danger");
+      } else if (state === "Success") {
+        liveToast.classList.add("bg-success");
+      }
+      liveToastContent.innerHTML = message;
+      const toast = new bootstrap.Toast(liveToast)
+      toast.show();
+    }
+
+    function DoThisWhenPageLoads(e){
+      HideLoaderScreen();
+      userID.focus();
+    }
+  </script>
+
+  <!-- Include Global Function File -->
+  <?!= include("global-functions"); ?>
+
+  <script>
+
+    // Events Listeners 
+    loginButton.addEventListener("click", OnClickOfSubmitButton);
+    document.addEventListener("DOMContentLoaded", DoThisWhenPageLoads);
+
+  </script>
+
+</body>
+
+</html>
