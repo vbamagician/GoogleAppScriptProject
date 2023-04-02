@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <base target="_top">
+  <!-- <base target="_self"> -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>
+    <?!= currentPageTitle; ?>
+  </title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+</head>
+
+<body class="bg-dark text-white">
+
+  <div class="container p-4">
+
+    <!-- Start: Navigation Panel -->
+    <div class="mb-4">
+      <div class="mb-4">
+        <button class="btn btn-primary btn-lg" type="submit" id="go-home"><i class="bi bi-house-door"></i> Home</button>
+        <span class="m-2"></span>
+        <button class="btn btn-secondary btn-lg" type="submit" id="logout"><i class="bi bi-box-arrow-left"></i> Logout</button>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col text-center">
+          <h1 id="page">
+            <?!= currentPageTitle; ?>
+          </h1>
+        </div>
+      </div>
+      <hr>
+      <div>
+        <span class="text-primary">Fields marked with (<span class="text-danger">*</span>) are mandatory</span>
+      </div>
+    </div>
+    <!-- End: Navigation Panel -->
+
+    <form>
+
+      <!-- Start: Select Student -->
+      <div class="row">
+
+        <!-- Start: Name of the Student -->
+        <div class="col-12 col-sm-4 mb-4">
+          <label for="student" class="form-label">Select Student<span class="text-danger"> *</span> :</label>
+          <select class="form-control" id="student" name="Student Name" required>
+            <option></option>
+            <?!= listStudents; ?>
+          </select>
+        </div>
+
+        <!-- Start: Academic Years -->
+        <div class="col-12 col-sm-4 mb-4">
+          <label for="academic-year" class="form-label">Select Academic Year<span class="text-danger"> *</span> :</label>
+          <select class="form-control" id="academic-year" name="Academic Year" required>
+            <option></option>
+            <?!= listAcademicYears; ?>
+          </select>
+        </div>
+      </div>
+      <!-- End: Select Student -->
+
+      <!-- Start: Academic Details -->
+      <div class="row">
+        <div class="col-12 col-sm-4 mb-4">
+          <label for="course" class="form-label">Course Name<span class="text-danger"> *</span> :</label>
+          <input type="text" class="form-control" id="course" name="Course Name" required>
+        </div>
+        <div class="col-12 col-sm-4 mb-4">
+          <label for="institute" class="form-label">Institute Name<span class="text-danger"> *</span> :</label>
+          <input type="text" class="form-control" id="institute" name="Institute Name" required>
+        </div>
+        <div class="col-12 col-sm-4 mb-4">
+          <label for="annual-fee" class="form-label">Annual Fee<span class="text-danger"> *</span> :</label>
+          <input type="number" class="form-control" id="annual-fee" name="Annual Fees" required>
+        </div>
+      </div>
+      <!-- End: Academic Details -->
+    </form>
+
+    <!-- Start: Live Toast -->
+    <div id="liveToast" class="toast align-items-center text-white fw-bold border-0 mb-4" role="alert"
+      aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
+      <div class="d-flex">
+        <div class="toast-body" id="liveToastContent">
+        </div>
+        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+    <!-- End: Live Toast -->
+
+    <!-- Start: Form Operation Buttons -->
+    <div>
+      <button class="btn btn-primary btn-lg" type="submit" id="save">
+        <span id="spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        <i class="bi bi-save"></i> Save
+      </button>
+      <span class="m-2"></span>
+      <button class="btn btn-secondary btn-lg" type="submit" id="reset"><i class="bi bi-arrow-clockwise"></i> Reset</button>
+    </div>
+    <!-- End: Form Operation Buttons -->
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+    integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"
+    integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK" crossorigin="anonymous">
+  </script>
+
+  <script>
+    // Global Variables
+    var logout = document.getElementById("logout");
+    var home = document.getElementById("go-home");
+
+    var fullname = document.getElementById("student");
+    var academicyear = document.getElementById("academic-year");
+    var coursename = document.getElementById("course");
+    var institutename = document.getElementById("institute");
+    var fees = document.getElementById("annual-fee");
+
+    var save = document.getElementById("save");
+    var reset = document.getElementById("reset");
+
+    var liveToast = document.getElementById("liveToast");
+    var liveToastContent = document.getElementById("liveToastContent");
+
+    var spinner = document.getElementById("spinner");
+    var CurrentPage = document.getElementById("page");
+
+  // Global Events Handlers
+    
+    function DoThisWhenPageLoads() { 
+      
+      HideSpinner();
+
+      var data = window.localStorage.getItem('fileDetails');
+      
+      if (data !== null) {
+
+        var fileData = JSON.parse(data);
+        
+        fullname.value = fileData.fullname;
+        academicyear.value = fileData.academicYear;
+        coursename.value = fileData.courseName;
+        institutename.value = fileData.instituteName;
+        fees.value = fileData.annualFees;
+      }
+
+      window.localStorage.clear();
+      fullname.focus();
+
+      if (CurrentPage.innerHTML.trim() === "Update File") {
+        reset.style.visibility = 'hidden';
+      }
+    }
+
+    function OnLogout(){
+      google.script.run.withSuccessHandler((obj) => {
+        RenderPage(obj.url);
+      }).LogoutUser();
+    }
+
+    function GotoHome(){
+      google.script.run.withSuccessHandler((obj) => {
+        RenderPage(obj.url);
+      }).TakeUserBackToHome();
+    }
+
+    function SaveRecord(){
+      
+      ShowSpinner();
+
+      if(IsValidToSaveRecord()){
+
+        var lineItems = GetFileLineItems();
+        
+        switch (CurrentPage.innerHTML.trim()) {          
+          case "Register New File":
+            google.script.run.withSuccessHandler(ResetFormStateAfterSuccessfullAddingNewFile).AddNewFile(lineItems);
+            break;
+
+          case "Update File":
+            google.script.run.withSuccessHandler(GoBack).UpdateFile(lineItems);
+            break;
+        }
+      } else {
+        HideSpinner();
+      }
+    }
+
+    function GoBack(){
+      google.script.run.withSuccessHandler((obj) => {
+        RenderPage(obj.url);
+        HideSpinner();
+      }).TakeUserToPreviousPage(CurrentPage.innerHTML.trim());
+    }
+
+  // Global Functions
+
+    function ResetFormStateAfterSuccessfullAddingNewFile() {
+
+      ShowLiveToast("Success", "File created successfully!");
+      ResetForm();
+      HideSpinner();
+    }
+
+    function GetFileLineItems() {
+      return ([
+        fullname.value.trim(),
+        academicyear.value,
+        coursename.value.trim(),
+        institutename.value.trim(),
+        fees.value.trim()
+      ]);
+    }
+
+  // Global Functions
+
+  </script>
+
+  <!-- Include Global Function File -->
+  <?!= include("global-functions"); ?>
+
+  <script>
+
+    // Global Events Listeners
+    logout.addEventListener("click", OnLogout);
+    home.addEventListener("click", GotoHome);
+    save.addEventListener("click", SaveRecord);
+    reset.addEventListener("click", ResetForm);
+    document.addEventListener("DOMContentLoaded", DoThisWhenPageLoads);
+
+  </script>
+
+</body>
+
+</html>
